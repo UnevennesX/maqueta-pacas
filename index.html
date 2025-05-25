@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maqueta-Pacas</title>
+    <style>
+        :root {
+            /* Colores del Sidebar Oscuro */
+            --dark-color: #2c3e50;       
+            --light-color: #ecf0f1;      
+            
+            /* Paleta General Ajustada */
+            --primary-color: #3B82F6;    
+            --accent-color: #4A5568;     
+            
+            --header-bg-color: #FFFFFF;    
+            --content-bg-color: #F0F2F5;   
+            
+            --text-color-dark: #1A202C;    
+            --text-color-light: #FFFFFF;   
+            --text-color-muted: #718096;   
+            --border-color-light: #E2E8F0; 
+
+            --sidebar-width: 260px;
+            --sidebar-width-collapsed: 70px; 
+            --header-height: 60px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Roboto', 'Segoe UI', sans-serif;
+            background-color: var(--content-bg-color); 
+            color: var(--text-color-dark);
+            line-height: 1.6;
+            font-size: 15px;
+            overflow-x: hidden;
+        }
+
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* --- Top Header --- */
+        .top-header {
+            height: var(--header-height);
+            background-color: var(--header-bg-color); 
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-color-light);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+            position: fixed;
+            top: 0;
+            left: var(--sidebar-width); 
+            right: 0;
+            z-index: 999;
+            transition: left 0.3s ease;
+        }
+        .sidebar.collapsed ~ .top-header {
+            left: var(--sidebar-width-collapsed);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+        }
+        .toggle-sidebar-btn {
+            background: none;
+            border: none;
+            font-size: 1.6em; 
+            cursor: pointer;
+            color: var(--accent-color); 
+            padding: 0 10px;
+        }
+        .toggle-sidebar-btn:hover {
+            color: var(--primary-color);
+        }
+
+        .user-profile-dropdown {
+            position: relative;
+        }
+        .user-profile-trigger {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: background-color 0.2s ease;
+        }
+        .user-profile-trigger:hover {
+            background-color: rgba(0,0,0,0.04);
+        }
+        .user-profile-trigger span {
+            font-weight: 500;
+            margin-right: 8px;
+            color: var(--text-color-dark);
+        }
+        .user-profile-trigger i {
+            font-size: 1.2em; 
+            color: var(--text-color-muted);
+        }
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 5px);
+            right: 0;
+            background-color: #fff;
+            border: 1px solid var(--border-color-light);
+            border-radius: 6px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.07);
+            min-width: 180px;
+            z-index: 1000;
+            list-style: none;
+            padding: 8px 0;
+            display: none;
+        }
+        .dropdown-menu.show {
+            display: block;
+        }
+        .dropdown-menu a {
+            display: flex; 
+            align-items: center;
+            padding: 8px 15px;
+            text-decoration: none;
+            color: var(--text-color-dark);
+            font-size: 0.95em;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+        .dropdown-menu a:hover {
+            background-color: #f0f2f5; 
+            color: var(--primary-color);
+        }
+        .dropdown-menu a i {
+            margin-right: 10px;
+            color: var(--text-color-muted);
+            transition: color 0.2s ease;
+        }
+        .dropdown-menu a:hover i {
+            color: var(--primary-color);
+        }
+        .dropdown-divider {
+            height: 1px;
+            background-color: var(--border-color-light);
+            margin: 8px 0;
+        }
+
+        /* --- Sidebar --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--dark-color); 
+            color: var(--light-color);       
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+            transition: width 0.3s ease;
+            z-index: 1000; 
+            display: flex; 
+            flex-direction: column;
+        }
+        .sidebar.collapsed {
+            width: var(--sidebar-width-collapsed);
+        }
+
+        .sidebar .logo-container {
+            height: var(--header-height); 
+            display: flex;
+            align-items: center;
+            justify-content: flex-start; 
+            padding: 0 20px;
+            text-decoration: none;
+            color: var(--light-color); 
+            font-size: 1.5em;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(255,255,255,0.1); 
+            flex-shrink: 0; 
+            white-space: nowrap;
+            overflow: hidden;
+        }
+        .sidebar .logo-container i {
+            font-size: 1.2em; 
+            margin-right: 8px;
+            color: var(--primary-color); 
+            transition: margin-right 0.3s ease;
+        }
+        .sidebar .logo-container span {
+            opacity: 1;
+            transition: opacity 0.2s ease 0.1s;
+        }
+        .sidebar.collapsed .logo-container {
+            padding: 0;
+            justify-content: center; 
+        }
+        .sidebar.collapsed .logo-container span {
+            display: none;
+            opacity: 0;
+        }
+        .sidebar.collapsed .logo-container i {
+            margin-right: 0;
+        }
+        
+        .sidebar-nav {
+            list-style-type: none;
+            padding: 15px 0; 
+            flex-grow: 1; 
+            overflow-y: auto; 
+        }
+        .sidebar-nav li {
+            margin: 0;
+        }
+        .sidebar-nav li a {
+            display: flex;
+            align-items: center;
+            padding: 10px 20px; 
+            text-decoration: none;
+            color: var(--light-color); 
+            font-weight: 500;
+            transition: background-color 0.2s ease, color 0.2s ease, padding 0.3s ease;
+            white-space: nowrap;
+            overflow: hidden;
+            position: relative;
+        }
+        .sidebar-nav li a i {
+            margin-right: 12px;
+            font-size: 1.1em; 
+            color: var(--light-color); 
+            opacity: 0.8; 
+            width: 22px; 
+            text-align: center;
+            flex-shrink: 0;
+            transition: color 0.2s ease, opacity 0.2s ease, font-size 0.3s ease, margin-right 0.3s ease;
+        }
+        .sidebar-nav li a span {
+            opacity: 1;
+            transition: opacity 0.2s ease 0.1s; 
+        }
+        .sidebar-nav li a:hover {
+            background-color: var(--primary-color); 
+            color: var(--text-color-light); 
+        }
+        .sidebar-nav li a:hover i {
+            color: var(--text-color-light);
+            opacity: 1;
+        }
+        .sidebar-nav li a.active-link,
+        .sidebar-nav li a.active-link:hover {
+            background-color: var(--primary-color); 
+            color: var(--text-color-light);
+        }
+        .sidebar-nav li a.active-link i {
+            color: var(--text-color-light);
+            opacity: 1;
+        }
+        .sidebar-nav li a.has-submenu::after {
+            content: '▼'; 
+            font-size: 0.6em;
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            transition: transform 0.3s ease, opacity 0.2s ease 0.1s;
+            color: var(--light-color); 
+            opacity: 0.7;
+        }
+        .sidebar-nav li a:hover.has-submenu::after,
+        .sidebar-nav li a.active-link.has-submenu::after {
+            color: var(--text-color-light);
+            opacity: 1;
+        }
+        .sidebar-nav li.open > a.has-submenu::after {
+            transform: translateY(-50%) rotate(-180deg);
+        }
+        .submenu {
+            list-style-type: none;
+            padding-left: 0;
+            background-color: rgba(0, 0, 0, 0.15); 
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, opacity 0.2s ease-out;
+            opacity: 0;
+        }
+        .sidebar-nav li.open > .submenu {
+            max-height: 500px; 
+            opacity: 1;
+        }
+        .submenu li a {
+            padding: 8px 20px 8px 45px; 
+            font-weight: 400; 
+            font-size: 0.9em;
+            color: var(--light-color); 
+            opacity: 0.9;
+        }
+        .submenu li a::before { 
+            content: ''; 
+            width: 5px;
+            height: 5px;
+            background-color: var(--light-color); 
+            opacity: 0.7;
+            border-radius: 50%;
+            position: absolute;
+            left: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            transition: background-color 0.2s ease, opacity 0.2s ease;
+        }
+        .submenu li a:hover,
+        .submenu li a.active-link {
+            color: var(--text-color-light); 
+            background-color: transparent; 
+            opacity: 1;
+        }
+        .submenu li a.active-link {
+            font-weight: 500; 
+        }
+         .submenu li a.active-link::before,
+         .submenu li a:hover::before {
+            background-color: var(--text-color-light); 
+            opacity: 1;
+        }
+        .sidebar.collapsed .sidebar-nav li a {
+            justify-content: center;
+            padding: 12px 0; 
+        }
+        .sidebar.collapsed .sidebar-nav li a i {
+            margin-right: 0; 
+            font-size: 1.5em; 
+            opacity: 1; 
+        }
+        .sidebar.collapsed .sidebar-nav li a span,
+        .sidebar.collapsed .sidebar-nav li a.has-submenu::after {
+            display: none; 
+            opacity: 0;
+        }
+        .sidebar.collapsed .submenu {
+            display: none !important; 
+        }
+
+        /* --- Main Content Area --- */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding-top: var(--header-height);
+            width: calc(100% - var(--sidebar-width));
+            transition: margin-left 0.3s ease, width 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        .sidebar.collapsed + .main-content {
+            margin-left: var(--sidebar-width-collapsed);
+            width: calc(100% - var(--sidebar-width-collapsed));
+        }
+        .page-content-wrapper {
+            padding: 25px;
+            flex-grow: 1;
+        }
+        .page-section {
+            display: none;
+            background-color: #fff; 
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            margin-bottom: 25px;
+        }
+        .page-section.active-section { display: block; }
+        .page-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color-light);
+        }
+        .page-section-header h2 {
+            margin: 0;
+            font-size: 1.6em;
+            color: var(--text-color-dark);
+        }
+
+        /* Estilos Específicos del Dashboard */
+        .dashboard-summary-cards {
+            display: grid; /* Usar grid para mejor control de columnas */
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Columnas responsivas */
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .summary-card {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            display: flex;
+            align-items: center;
+        }
+        .summary-card .card-icon {
+            font-size: 2.2em; /* Ligeramente más pequeño para mejor proporción */
+            padding: 12px; /* Ajustado */
+            border-radius: 50%;
+            margin-right: 20px;
+            color: #fff;
+            width: 50px; /* Ancho y alto fijos para el círculo */
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .summary-card .card-icon.compras-icon { background-color: var(--primary-color); }
+        .summary-card .card-icon.pacas-icon { background-color: #10B981; } 
+        .summary-card .card-icon.piezas-icon { background-color: #F59E0B; } 
+
+        .summary-card .card-content h3 {
+            margin-top: 0;
+            margin-bottom: 3px; /* Menos espacio */
+            font-size: 0.9em; /* Más pequeño */
+            color: var(--text-color-muted);
+            font-weight: 500;
+            text-transform: uppercase; /* Mayúsculas para el título de la tarjeta */
+        }
+        .summary-card .card-content .card-number {
+            font-size: 1.8em; /* Ligeramente más pequeño */
+            font-weight: 700;
+            color: var(--text-color-dark);
+            margin-bottom: 2px;
+            line-height: 1.2;
+        }
+        .summary-card .card-content .card-description {
+            font-size: 0.8em; /* Más pequeño */
+            color: var(--text-color-muted);
+            margin: 0;
+        }
+
+        .dashboard-charts-section {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            margin-bottom: 30px;
+        }
+        .dashboard-charts-section h3 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            color: var(--text-color-dark);
+        }
+        .chart-placeholder img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 6px;
+            border: 1px solid var(--border-color-light);
+        }
+
+        .dashboard-quick-actions {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color-light);
+        }
+        .dashboard-quick-actions h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            color: var(--text-color-dark);
+        }
+        .dashboard-quick-actions .button {
+            margin-right: 10px;
+            margin-bottom: 10px; 
+        }
+        .dashboard-quick-actions .button i {
+            margin-right: 8px;
+        }
+
+
+        /* --- Estilos Comunes (Botones, Formularios, Tablas) --- */
+        table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+        th, td { border: 1px solid var(--border-color-light); padding: 10px 12px; text-align: left; line-height: 1.5; }
+        th { background-color: #f9fafb; font-weight: 600; color: var(--text-color-dark); }
+        tr:nth-child(even) td { background-color: #FDFDFE; } 
+        tr:hover td { background-color: #EFF6FF; } 
+        .form-group { margin-bottom: 1.25rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-color-dark); font-size: 0.95em; }
+        .form-group input[type="text"], .form-group input[type="date"], .form-group input[type="number"],
+        .form-group input[type="datetime-local"], .form-group input[type="email"], .form-group select, .form-group textarea {
+            width: 100%; padding: 9px 12px; border: 1px solid var(--border-color-light); border-radius: 5px;
+            font-size: 0.95rem; line-height: 1.5; transition: border-color 0.2s, box-shadow 0.2s;
+            background-color: #fff; 
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: var(--primary-color); outline: 0;
+            box-shadow: 0 0 0 0.15rem rgba(59, 130, 246, 0.25); 
+        }
+        .form-group textarea { resize: vertical; min-height: 80px; }
+        .button {
+            display: inline-block; padding: 8px 16px; font-size: 0.9rem; font-weight: 500;
+            line-height: 1.5; text-align: center; text-decoration: none; white-space: nowrap;
+            vertical-align: middle; cursor: pointer; user-select: none; border: 1px solid transparent;
+            border-radius: 5px; transition: all 0.15s ease-in-out;
+        }
+        .button-primary { color: var(--text-color-light); background-color: var(--primary-color); border-color: var(--primary-color); }
+        .button-primary:hover { background-color: #2563EB; border-color: #2563EB; } 
+        .button-secondary { color: var(--text-color-light); background-color: var(--accent-color); border-color: var(--accent-color); }
+        .button-secondary:hover { background-color: #2D3748; border-color: #2D3748; } 
+        .button-success { color: var(--text-color-light); background-color: #10B981; border-color: #10B981; } 
+        .button-success:hover { background-color: #059669; border-color: #059669; }
+        .button-danger { color: var(--text-color-light); background-color: #EF4444; border-color: #EF4444; } 
+        .button-danger:hover { background-color: #DC2626; border-color: #DC2626; }
+        .button-sm { padding: 5px 10px; font-size: 0.8em; }
+        .form-actions { margin-top: 1.5rem; text-align: right; padding-top: 1rem; border-top: 1px solid var(--border-color-light); }
+        .form-actions .button { margin-left: 0.75rem; }
+        .form-section { border: 1px solid var(--border-color-light); padding: 1.25rem; margin-bottom: 1.5rem; border-radius: 6px; background-color: #fff; }
+        .form-section h3 { margin-top: 0; margin-bottom: 1rem; font-size: 1.2em; color: var(--text-color-dark); padding-bottom: 0.75rem; border-bottom: 1px solid var(--border-color-light);}
+        .hidden { display: none !important; }
+        .text-muted { color: var(--text-color-muted); font-size: 0.9em; }
+        .table-actions .button { margin-right: 5px; }
+        .form-row { display: flex; gap: 1.25rem; align-items: flex-end; }
+        .form-row .form-group { flex-grow: 1; margin-bottom: 0; }
+        .form-row .form-group-fixed input[type="number"] { width: 90px; }
+        .form-row .form-group-fixed .button { margin-bottom: 0; }
+
+        /* Iconos */
+        [class^="icon-"]:before, [class*=" icon-"]:before { font-family: sans-serif; }
+        .icon-app-logo:before { content: "📦"; }
+        .icon-menu-toggle:before { content: "☰"; }
+        .icon-user-profile:before { content: "👤"; }
+        .icon-dashboard:before { content: "📊"; }
+        .icon-compras:before { content: "🛒"; }
+        .icon-pacas:before { content: "🗳️"; } 
+        .icon-separaciones:before { content: "✂️"; }
+        .icon-perfil:before { content: "⚙️"; }
+        .icon-logout:before { content: "🚪"; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+
+        <aside class="sidebar" id="sidebar">
+            <a href="#dashboard" class="logo-container nav-link"> 
+                <i class="icon-app-logo"></i>
+                <span>Pacas System</span>
+            </a>
+            <ul class="sidebar-nav" id="sidebar-nav">
+                <li><a href="#dashboard" class="nav-link"><i class="icon-dashboard"></i> <span>Dashboard</span></a></li>
+                <li>
+                    <a href="#" class="nav-link has-submenu"><i class="icon-compras"></i> <span>Compras</span></a>
+                    <ul class="submenu">
+                        <li><a href="#compras-listado" class="nav-link">Ver Compras</a></li>
+                        <li><a href="#compras-formulario" class="nav-link">Nueva Compra</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="nav-link has-submenu"><i class="icon-pacas"></i> <span>Pacas</span></a>
+                    <ul class="submenu">
+                        <li><a href="#pacas-listado" class="nav-link">Ver Pacas</a></li>
+                        <li><a href="#pacas-formulario" class="nav-link">Registrar Paca</a></li>
+                    </ul>
+                </li>
+                 <li>
+                    <a href="#" class="nav-link has-submenu"><i class="icon-separaciones"></i> <span>Separaciones</span></a>
+                     <ul class="submenu">
+                        <li><a href="#separacion-formulario" class="nav-link">Nueva Separación</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </aside>
+
+        <header class="top-header">
+            <div class="header-left">
+                 <button class="toggle-sidebar-btn" id="toggleSidebarBtn"><i class="icon-menu-toggle"></i></button>
+            </div>
+            <div class="user-profile-dropdown">
+                <div class="user-profile-trigger" id="userProfileTrigger">
+                    <span>Usuario Ejemplo</span>
+                    <i class="icon-user-profile"></i>
+                </div>
+                <ul class="dropdown-menu" id="userDropdownMenu">
+                    <li><a href="#perfil" class="nav-link"><i class="icon-perfil"></i> Mi Perfil</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a href="#" id="logoutLink"><i class="icon-logout"></i> Cerrar Sesión</a></li>
+                </ul>
+            </div>
+        </header>
+
+        <div class="main-content" id="mainContent"> 
+            <main class="page-content-wrapper">
+                
+                <!-- DASHBOARD -->
+                <div id="dashboard" class="page-section">
+                    <div class="page-section-header"><h2>Dashboard</h2></div>
+                    
+                    <div class="dashboard-summary-cards">
+                        <div class="summary-card">
+                            <div class="card-icon compras-icon"><i class="icon-compras"></i></div>
+                            <div class="card-content">
+                                <h3>Total Compras</h3>
+                                <p class="card-number" id="db-total-compras">125</p>
+                                <p class="card-description">Órdenes realizadas</p>
+                            </div>
+                        </div>
+                        <div class="summary-card">
+                            <div class="card-icon pacas-icon"><i class="icon-pacas"></i></div>
+                            <div class="card-content">
+                                <h3>Pacas en Inventario</h3>
+                                <p class="card-number" id="db-pacas-inventario">350</p>
+                                <p class="card-description">Unidades disponibles</p>
+                            </div>
+                        </div>
+                        <div class="summary-card">
+                            <div class="card-icon piezas-icon"><i class="icon-separaciones"></i></div>
+                            <div class="card-content">
+                                <h3>Piezas Clasificadas</h3>
+                                <p class="card-number" id="db-piezas-clasificadas">12,840</p>
+                                <p class="card-description">Items listos para venta</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-charts-section">
+                        <h3>Actividad Reciente (Ejemplo)</h3>
+                        <div class="chart-placeholder">
+                            <img src="https://via.placeholder.com/600x300.png?text=Gráfico+de+Compras+y+Ventas" alt="Gráfico de Ejemplo">
+                            <p class="text-muted" style="text-align:center; margin-top:10px;">Aquí iría un gráfico de actividad, ej. Compras vs. Ventas.</p>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-quick-actions">
+                        <h3>Accesos Rápidos</h3>
+                        <a href="#compras-formulario" class="button button-primary nav-link"><i class="icon-compras"></i> Nueva Compra</a>
+                        <a href="#pacas-formulario" class="button button-success nav-link"><i class="icon-pacas"></i> Registrar Paca</a>
+                        <a href="#separacion-formulario" class="button button-secondary nav-link"><i class="icon-separaciones"></i> Nueva Separación</a>
+                    </div>
+                </div>
+
+                <!-- COMPRAS LISTADO -->
+                <div id="compras-listado" class="page-section">
+                    <div class="page-section-header">
+                        <h2>Listado de Compras</h2>
+                        <a href="#compras-formulario" class="button button-primary nav-link">Nueva Compra</a>
+                    </div>
+                    <table>
+                        <thead><tr><th>ID</th><th>Fecha</th><th>Proveedor</th><th>Estado</th><th>Acciones</th></tr></thead>
+                        <tbody>
+                            <tr><td>C001</td><td>2024-07-15</td><td>Proveedor Alfa</td><td>Pendiente</td><td class="table-actions"><a href="#compras-formulario?id=C001" class="button button-sm button-primary nav-link">Editar</a> <a href="#pacas-formulario?compra_id=C001" class="button button-sm button-success nav-link">Recibir</a></td></tr>
+                            <tr><td>C002</td><td>2024-07-10</td><td>Prov. Beta</td><td>Recibida</td><td class="table-actions"><a href="#compras-formulario?id=C002" class="button button-sm button-primary nav-link">Ver</a></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- COMPRAS FORMULARIO -->
+                <div id="compras-formulario" class="page-section">
+                     <div class="page-section-header"><h2 id="titulo-form-compra">Registrar Nueva Compra</h2> <a href="#compras-listado" class="button button-secondary nav-link">Volver</a></div>
+                    <form id="formCompra">
+                        <div class="form-section">
+                            <h3>Información General</h3>
+                            <div class="form-group"><label for="compra_fecha">Fecha:*</label><input type="date" id="compra_fecha" required></div>
+                            <div class="form-group"><label for="prov_id_compra">Proveedor:*</label><select id="prov_id_compra"><option value="">Seleccione</option><option value="1">Prov. Alfa</option><option value="otro">Otro</option></select></div>
+                            <div class="form-group hidden" id="compra_prov_libre_group"><label for="compra_prov_libre">Prov. (Libre):</label><input type="text" id="compra_prov_libre"></div>
+                        </div>
+                        <div class="form-section">
+                            <h3>Detalles y Costos</h3>
+                            <div class="form-row">
+                                <div class="form-group"><label for="compra_cant_paquetes_esp">Pacas Esperadas:*</label><input type="number" id="compra_cant_paquetes_esp" min="1" required></div>
+                                <div class="form-group"><label for="compra_peso_total_kg">Peso Total (kg):*</label><input type="number" id="compra_peso_total_kg" step="0.01" min="0.01" required></div>
+                            </div>
+                             <div class="form-row">
+                                <div class="form-group"><label for="compra_subtotal">Subtotal:*</label><input type="number" id="compra_subtotal" step="0.01" required></div>
+                                <div class="form-group"><label for="compra_impuestos">Impuestos:*</label><input type="number" id="compra_impuestos" step="0.01" required></div>
+                                <div class="form-group"><label for="compra_total_disp">Total:</label><input type="number" id="compra_total_disp" readonly style="background:#eee;"></div>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <a href="#compras-listado" class="button button-secondary nav-link">Cancelar</a>
+                            <button type="submit" class="button button-success">Guardar Compra</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- PACAS LISTADO -->
+                <div id="pacas-listado" class="page-section">
+                    <div class="page-section-header">
+                        <h2 id="titulo-listado-pacas">Listado de Pacas</h2>
+                        <a href="#pacas-formulario" class="button button-primary nav-link">Registrar Paca</a>
+                    </div>
+                     <p id="info-compra-asociada-pacas" class="text-muted"></p>
+                    <table>
+                        <thead><tr><th>ID Paca</th><th>Cód. Único</th><th>Compra</th><th>Fecha Recep.</th><th>Peso</th><th>Estado</th><th>Acciones</th></tr></thead>
+                        <tbody>
+                            <tr><td>P001-1</td><td>BARCODE123</td><td>C001</td><td>2024-07-16</td><td>50.5kg</td><td>Recibida</td><td class="table-actions"><a href="#pacas-formulario?id=P001-1" class="button button-sm button-primary nav-link">Editar</a> <a href="#separacion-formulario?paca_id=P001-1" class="button button-sm button-success nav-link">Separar</a></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- PACAS FORMULARIO -->
+                <div id="pacas-formulario" class="page-section">
+                    <div class="page-section-header"><h2 id="titulo-form-paca">Registrar Nueva Paca</h2><a href="#pacas-listado" class="button button-secondary nav-link">Volver</a></div>
+                    <form id="formPaca">
+                         <div class="form-section">
+                            <h3>Asociación y Detalles</h3>
+                            <div class="form-group"><label for="paca_compra_id_select">Compra Asociada:*</label><select id="paca_compra_id_select" required><option value="">Seleccione</option><option value="C001">C001 - Prov. Alfa</option></select></div>
+                            <div class="form-group"><label for="paca_codigo_unico">Código Único:*</label><input type="text" id="paca_codigo_unico" required></div>
+                            <div class="form-row">
+                                <div class="form-group"><label for="paca_fecha_recepcion">Fecha Recepción:*</label><input type="date" id="paca_fecha_recepcion" required></div>
+                                <div class="form-group"><label for="paca_peso_kg">Peso (kg):*</label><input type="number" id="paca_peso_kg" step="0.01" min="0.01" required></div>
+                            </div>
+                            <div class="form-group"><label for="paca_alm_recepcion_id">Almacén:*</label><select id="paca_alm_recepcion_id" required><option value="">Seleccione</option><option value="1">Alm. Principal</option></select></div>
+                        </div>
+                        <div class="form-actions">
+                            <a href="#pacas-listado" class="button button-secondary nav-link">Cancelar</a>
+                            <button type="submit" class="button button-success">Guardar Paca</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- SEPARACION FORMULARIO -->
+                <div id="separacion-formulario" class="page-section">
+                    <div class="page-section-header"><h2 id="titulo-form-separacion">Iniciar Nueva Separación</h2> <a href="#pacas-listado" class="button button-secondary nav-link">Volver</a></div>
+                    <form id="formSeparacion">
+                        <div class="form-section">
+                            <h3>Seleccionar Paca y Sesión</h3>
+                            <div class="form-row">
+                                <div class="form-group"><label for="sep_paca_id_select">Paca a Separar:*</label><select id="sep_paca_id_select" required><option value="">Seleccione</option><option value="P001-1" data-peso="50.5" data-tipo="Mixta">P001-1 (BARCODE123)</option></select></div>
+                                <div class="form-group"><label for="sep_fecha_inicio">Fecha Inicio:*</label><input type="datetime-local" id="sep_fecha_inicio" required></div>
+                            </div>
+                            <div id="info-paca-seleccionada-sep" class="text-muted"><p>Peso: <span id="paca-peso-sep">--</span> kg, Tipo: <span id="paca-tipo-sep">--</span></p></div>
+                        </div>
+                         <div class="form-section">
+                            <h3>Añadir Piezas Clasificadas</h3>
+                            <div class="form-row">
+                                <div class="form-group"><label>Categoría:*</label><select id="det_cat_pieza_id_sep"><option value="">Sel.</option><option value="1">Grado A</option></select></div>
+                                <div class="form-group"><label>Tipo:*</label><select id="det_tipo_pieza_id_sep"><option value="">Sel.</option><option value="10">Pantalón</option></select></div>
+                                <div class="form-group form-group-fixed"><label>Cant:*</label><input type="number" id="det_sep_cantidad_sep" min="1"></div>
+                                <button type="button" id="btnAnadirPiezaSep" class="button button-primary">Añadir</button>
+                            </div>
+                            <h4>Piezas Añadidas:</h4>
+                            <table id="tabla-piezas-separadas-det">
+                                <thead><tr><th>Categoría</th><th>Tipo</th><th>Cant.</th><th>Acción</th></tr></thead>
+                                <tbody></tbody>
+                            </table>
+                            <p>Total Piezas: <span id="total-piezas-sep-span">0</span></p>
+                        </div>
+                        <div class="form-actions">
+                            <a href="#pacas-listado" class="button button-secondary nav-link">Cancelar</a>
+                            <button type="submit" class="button button-success">Guardar Sesión</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- PERFIL -->
+                <div id="perfil" class="page-section">
+                    <div class="page-section-header"><h2>Mi Perfil</h2></div>
+                    <p>Aquí se mostraría la información del perfil del usuario y opciones para editarla.</p>
+                    <div class="form-group">
+                        <label for="profile_name">Nombre:</label>
+                        <input type="text" id="profile_name" value="Usuario Ejemplo" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="profile_email">Correo Electrónico:</label>
+                        <input type="email" id="profile_email" value="usuario@ejemplo.com" readonly>
+                    </div>
+                    <button class="button button-primary">Editar Perfil (Simulado)</button>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const sidebar = document.getElementById('sidebar');
+        const toggleSidebarBtn = document.getElementById('toggleSidebarBtn');
+        const allNavLinks = document.querySelectorAll('.nav-link'); 
+        const pageSections = document.querySelectorAll('.page-section');
+        const submenuToggles = document.querySelectorAll('.sidebar .nav-link.has-submenu');
+        
+        const userProfileTrigger = document.getElementById('userProfileTrigger');
+        const userDropdownMenu = document.getElementById('userDropdownMenu');
+        const logoutLink = document.getElementById('logoutLink');
+
+        const sidebarIsCollapsed = localStorage.getItem('sidebarIsCollapsed') === 'true';
+        if (sidebarIsCollapsed && sidebar) {
+            sidebar.classList.add('collapsed');
+        }
+
+        if (toggleSidebarBtn && sidebar) {
+            toggleSidebarBtn.addEventListener('click', function() {
+                sidebar.classList.toggle('collapsed');
+                localStorage.setItem('sidebarIsCollapsed', sidebar.classList.contains('collapsed'));
+            });
+        }
+        
+        submenuToggles.forEach(toggle => {
+            toggle.addEventListener('click', function(e) {
+                if (this.getAttribute('href') === '#') { 
+                    e.preventDefault();
+                }
+                const parentLi = this.parentElement;
+
+                if (sidebar.classList.contains('collapsed')) {
+                    sidebar.classList.remove('collapsed');
+                    localStorage.setItem('sidebarIsCollapsed', 'false'); 
+                    setTimeout(() => {
+                        document.querySelectorAll('.sidebar-nav > li.open').forEach(li => {
+                            if (li !== parentLi) li.classList.remove('open');
+                        });
+                        parentLi.classList.add('open');
+                    }, 150); 
+                } else {
+                    const isCurrentlyOpen = parentLi.classList.contains('open');
+                    document.querySelectorAll('.sidebar-nav > li.open').forEach(li => {
+                        if (li !== parentLi) {
+                            li.classList.remove('open');
+                        }
+                    });
+                    if (!isCurrentlyOpen) {
+                        parentLi.classList.add('open');
+                    } else {
+                        parentLi.classList.remove('open');
+                    }
+                }
+            });
+        });
+
+        if (userProfileTrigger && userDropdownMenu) {
+            userProfileTrigger.addEventListener('click', function(e) {
+                e.stopPropagation(); 
+                userDropdownMenu.classList.toggle('show');
+            });
+            window.addEventListener('click', function() {
+                if (userDropdownMenu.classList.contains('show')) {
+                    userDropdownMenu.classList.remove('show');
+                }
+            });
+        }
+        
+        if (logoutLink) {
+            logoutLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (userDropdownMenu) userDropdownMenu.classList.remove('show'); 
+                if (confirm('¿Está seguro de que desea cerrar sesión?')) {
+                    alert('Sesión cerrada (simulado). Redirigiendo al dashboard...');
+                    localStorage.removeItem('sidebarIsCollapsed');
+                    window.location.hash = '#dashboard';
+                }
+            });
+        }
+
+        function setActiveSection(targetId, params) {
+            pageSections.forEach(section => section.classList.remove('active-section'));
+            const targetSection = document.getElementById(targetId);
+            if (targetSection) {
+                targetSection.classList.add('active-section');
+                loadFormData(targetId, params);
+            } else {
+                document.getElementById('dashboard')?.classList.add('active-section');
+            }
+        }
+
+        function updateActiveLinkStates(targetIdWithoutQuery) {
+            document.querySelectorAll('.sidebar-nav .nav-link').forEach(link => link.classList.remove('active-link'));
+            const activeSidebarLink = document.querySelector(`.sidebar-nav a[href="#${targetIdWithoutQuery}"]`);
+
+            if (activeSidebarLink) {
+                activeSidebarLink.classList.add('active-link');
+                let parentLi = activeSidebarLink.closest('li'); 
+                if (parentLi && parentLi.parentElement.classList.contains('submenu')) {
+                    const mainMenuItemLi = parentLi.parentElement.closest('li'); 
+                    if (mainMenuItemLi && !mainMenuItemLi.classList.contains('open')) {
+                       mainMenuItemLi.classList.add('open');
+                    }
+                }
+            } else {
+                document.querySelector('.sidebar-nav a[href="#dashboard"]')?.classList.add('active-link');
+            }
+        }
+        
+        function handleNavigation(hash) {
+            let targetId = 'dashboard';
+            let params = {};
+            let targetIdWithoutQuery = 'dashboard';
+
+            if (hash && hash !== '#') {
+                const parts = hash.substring(1).split('?');
+                targetIdWithoutQuery = parts[0] || 'dashboard';
+                targetId = targetIdWithoutQuery;
+
+                if (parts[1]) {
+                    const urlParams = new URLSearchParams(parts[1]);
+                    for (const [key, value] of urlParams) { params[key] = value; }
+                }
+            }
+            setActiveSection(targetId, params);
+            updateActiveLinkStates(targetIdWithoutQuery);
+            if (userDropdownMenu) userDropdownMenu.classList.remove('show'); 
+        }
+        
+        allNavLinks.forEach(link => { 
+            link.addEventListener('click', function(e) {
+                const href = this.getAttribute('href');
+                if (href && href.startsWith('#') && href !== '#') {
+                    if (this.closest('.dropdown-menu')) {
+                        userDropdownMenu.classList.remove('show');
+                    }
+                }
+            });
+        });
+
+        window.addEventListener('hashchange', () => handleNavigation(window.location.hash));
+        handleNavigation(window.location.hash || '#dashboard');
+
+        function loadFormData(sectionId, params) {
+            const formCompraEl = document.getElementById('formCompra');
+            const formPacaEl = document.getElementById('formPaca');
+            const formSeparacionEl = document.getElementById('formSeparacion');
+
+            if (sectionId === 'compras-formulario') {
+                document.getElementById('titulo-form-compra').textContent = params.id ? `Editar Compra ${params.id}` : 'Registrar Nueva Compra';
+                if (!params.id && formCompraEl) formCompraEl.reset(); 
+            }
+            else if (sectionId === 'pacas-listado') { 
+                document.getElementById('info-compra-asociada-pacas').textContent = params.compra_id ? `Mostrando pacas para Compra ${params.compra_id}.` : '';
+            }
+            else if (sectionId === 'pacas-formulario') {
+                document.getElementById('titulo-form-paca').textContent = params.id ? `Editar Paca ${params.id}` : 'Registrar Nueva Paca';
+                if (params.compra_id) document.getElementById('paca_compra_id_select').value = params.compra_id;
+                else if (!params.id && formPacaEl) formPacaEl.reset(); 
+            }
+            else if (sectionId === 'separacion-formulario') {
+                document.getElementById('titulo-form-separacion').textContent = params.paca_id ? `Separar Paca ${params.paca_id}` : 'Iniciar Nueva Separación';
+                const sepPacaSelect = document.getElementById('sep_paca_id_select');
+                const pacaPesoSepSpanForm = document.getElementById('paca-peso-sep');
+                const pacaTipoSepSpanForm = document.getElementById('paca-tipo-sep');
+
+                if (params.paca_id && sepPacaSelect) {
+                    sepPacaSelect.value = params.paca_id;
+                    const event = new Event('change', { bubbles: true });
+                    sepPacaSelect.dispatchEvent(event); 
+                } else {
+                     if (formSeparacionEl) formSeparacionEl.reset();
+                     document.getElementById('tabla-piezas-separadas-det').getElementsByTagName('tbody')[0].innerHTML = '';
+                     document.getElementById('total-piezas-sep-span').textContent = '0';
+                     if(pacaPesoSepSpanForm) pacaPesoSepSpanForm.textContent = '--';
+                     if(pacaTipoSepSpanForm) pacaTipoSepSpanForm.textContent = '--';
+                }
+            }
+        }
+
+        const provSelectCompra = document.getElementById('prov_id_compra');
+        const provLibreGroupCompra = document.getElementById('compra_prov_libre_group');
+        if (provSelectCompra && provLibreGroupCompra) { provSelectCompra.addEventListener('change', function() { provLibreGroupCompra.classList.toggle('hidden', this.value !== 'otro'); });}
+        
+        const subtotalInput = document.getElementById('compra_subtotal');
+        const impuestosInput = document.getElementById('compra_impuestos');
+        const totalDispInput = document.getElementById('compra_total_disp');
+        function calcTotalCompra() { if (subtotalInput && impuestosInput && totalDispInput) { totalDispInput.value = ((parseFloat(subtotalInput.value)||0) + (parseFloat(impuestosInput.value)||0)).toFixed(2); }}
+        if(subtotalInput) subtotalInput.addEventListener('input', calcTotalCompra);
+        if(impuestosInput) impuestosInput.addEventListener('input', calcTotalCompra);
+        
+        const formCompra = document.getElementById('formCompra');
+        if(formCompra) { formCompra.addEventListener('submit', function(e){ e.preventDefault(); alert('Compra guardada (simulado)'); window.location.hash = '#compras-listado'; });}
+
+        const formPaca = document.getElementById('formPaca');
+        if(formPaca) { formPaca.addEventListener('submit', function(e){ e.preventDefault(); alert('Paca guardada (simulado)'); window.location.hash = '#pacas-listado'; });}
+
+        const selectPacaSep = document.getElementById('sep_paca_id_select');
+        const pacaPesoSepSpan = document.getElementById('paca-peso-sep');
+        const pacaTipoSepSpan = document.getElementById('paca-tipo-sep');
+        if (selectPacaSep && pacaPesoSepSpan && pacaTipoSepSpan) { 
+            selectPacaSep.addEventListener('change', function() { 
+                const opt = this.options[this.selectedIndex]; 
+                pacaPesoSepSpan.textContent = opt.dataset.peso || '--'; 
+                pacaTipoSepSpan.textContent = opt.dataset.tipo || '--'; 
+            });
+        }
+
+        const btnAnadirPiezaSep = document.getElementById('btnAnadirPiezaSep');
+        const tablaPiezasBodySep = document.getElementById('tabla-piezas-separadas-det')?.getElementsByTagName('tbody')[0]; 
+        const totalPiezasSepSpan = document.getElementById('total-piezas-sep-span');
+        let _totalPiezasSep = 0;
+
+        if (btnAnadirPiezaSep && tablaPiezasBodySep && totalPiezasSepSpan) {
+            btnAnadirPiezaSep.addEventListener('click', function() {
+                const catSel = document.getElementById('det_cat_pieza_id_sep');
+                const tipoSel = document.getElementById('det_tipo_pieza_id_sep');
+                const cantInput = document.getElementById('det_sep_cantidad_sep');
+                const catTxt = catSel.options[catSel.selectedIndex].text; 
+                const tipoTxt = tipoSel.options[tipoSel.selectedIndex].text;
+                const cant = parseInt(cantInput.value) || 0;
+                
+                if (!catSel.value || !tipoSel.value || cant <= 0) { alert('Complete todos los datos de la pieza y asegúrese que la cantidad sea mayor a cero.'); return; }
+                
+                const newRow = tablaPiezasBodySep.insertRow();
+                newRow.innerHTML = `<td>${catTxt}</td><td>${tipoTxt}</td><td>${cant}</td><td class="table-actions"><button type="button" class="button button-sm button-danger btn-eliminar-pieza-sep">X</button></td>`;
+                
+                _totalPiezasSep += cant; 
+                totalPiezasSepSpan.textContent = _totalPiezasSep;
+                
+                catSel.value = ''; tipoSel.value = ''; cantInput.value = ''; 
+                
+                newRow.querySelector('.btn-eliminar-pieza-sep').addEventListener('click', function() {
+                    const fila = this.closest('tr');
+                    const cantEliminar = parseInt(fila.cells[2].textContent); 
+                    _totalPiezasSep -= cantEliminar;
+                    totalPiezasSepSpan.textContent = _totalPiezasSep; 
+                    fila.remove();
+                });
+            });
+        }
+        const formSeparacion = document.getElementById('formSeparacion');
+        if(formSeparacion) { formSeparacion.addEventListener('submit', function(e){ e.preventDefault(); alert('Sesión de separación guardada (simulado)'); window.location.hash = '#pacas-listado'; });}
+    });
+    </script>
+</body>
+</html>
