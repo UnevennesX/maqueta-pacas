@@ -39,8 +39,19 @@
             color: var(--text-color-dark);
             line-height: 1.6;
             font-size: 15px;
-            overflow-x: hidden;
+            overflow-x: hidden; /* Evitar scroll horizontal general */
         }
+        body.sidebar-open-overlay::before { /* Overlay para sidebar móvil */
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.4);
+            z-index: 1000; 
+        }
+
 
         .app-container {
             display: flex;
@@ -51,7 +62,7 @@
         .top-header {
             height: var(--header-height);
             background-color: var(--header-bg-color); 
-            padding: 0 20px;
+            padding: 0 15px; /* Menos padding en header */
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -91,7 +102,7 @@
             display: flex;
             align-items: center;
             cursor: pointer;
-            padding: 8px 12px;
+            padding: 8px; /* Menos padding en trigger */
             border-radius: 6px;
             transition: background-color 0.2s ease;
         }
@@ -116,7 +127,7 @@
             border-radius: 6px;
             box-shadow: 0 3px 10px rgba(0,0,0,0.07);
             min-width: 180px;
-            z-index: 1000;
+            z-index: 1001; /* Encima del overlay */
             list-style: none;
             padding: 8px 0;
             display: none;
@@ -162,12 +173,12 @@
             height: 100vh;
             overflow-y: auto;
             overflow-x: hidden;
-            transition: width 0.3s ease;
-            z-index: 1000; 
+            transition: width 0.3s ease, left 0.3s ease; /* Añadido left a la transición */
+            z-index: 1001; /* Para que esté encima del overlay cuando es móvil */
             display: flex; 
             flex-direction: column;
         }
-        .sidebar.collapsed {
+        .sidebar.collapsed { /* Estado por defecto en desktop */
             width: var(--sidebar-width-collapsed);
         }
 
@@ -386,8 +397,8 @@
 
         /* Estilos Específicos del Dashboard */
         .dashboard-summary-cards {
-            display: grid; /* Usar grid para mejor control de columnas */
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Columnas responsivas */
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); /* Ajustado minmax */
             gap: 20px;
             margin-bottom: 30px;
         }
@@ -400,12 +411,12 @@
             align-items: center;
         }
         .summary-card .card-icon {
-            font-size: 2.2em; /* Ligeramente más pequeño para mejor proporción */
-            padding: 12px; /* Ajustado */
+            font-size: 2.2em; 
+            padding: 12px; 
             border-radius: 50%;
             margin-right: 20px;
             color: #fff;
-            width: 50px; /* Ancho y alto fijos para el círculo */
+            width: 50px; 
             height: 50px;
             display: flex;
             align-items: center;
@@ -414,28 +425,26 @@
         .summary-card .card-icon.compras-icon { background-color: var(--primary-color); }
         .summary-card .card-icon.pacas-icon { background-color: #10B981; } 
         .summary-card .card-icon.piezas-icon { background-color: #F59E0B; } 
-
         .summary-card .card-content h3 {
             margin-top: 0;
-            margin-bottom: 3px; /* Menos espacio */
-            font-size: 0.9em; /* Más pequeño */
+            margin-bottom: 3px; 
+            font-size: 0.9em; 
             color: var(--text-color-muted);
             font-weight: 500;
-            text-transform: uppercase; /* Mayúsculas para el título de la tarjeta */
+            text-transform: uppercase; 
         }
         .summary-card .card-content .card-number {
-            font-size: 1.8em; /* Ligeramente más pequeño */
+            font-size: 1.8em; 
             font-weight: 700;
             color: var(--text-color-dark);
             margin-bottom: 2px;
             line-height: 1.2;
         }
         .summary-card .card-content .card-description {
-            font-size: 0.8em; /* Más pequeño */
+            font-size: 0.8em; 
             color: var(--text-color-muted);
             margin: 0;
         }
-
         .dashboard-charts-section {
             background-color: #fff;
             padding: 20px;
@@ -455,7 +464,6 @@
             border-radius: 6px;
             border: 1px solid var(--border-color-light);
         }
-
         .dashboard-quick-actions {
             margin-top: 20px;
             padding-top: 20px;
@@ -474,7 +482,11 @@
         .dashboard-quick-actions .button i {
             margin-right: 8px;
         }
-
+        .table-responsive-wrapper { /* Para tablas responsivas */
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch; 
+            margin-bottom: 1rem; 
+        }
 
         /* --- Estilos Comunes (Botones, Formularios, Tablas) --- */
         table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
@@ -533,6 +545,118 @@
         .icon-separaciones:before { content: "✂️"; }
         .icon-perfil:before { content: "⚙️"; }
         .icon-logout:before { content: "🚪"; }
+
+        /* --- Estilos Responsivos --- */
+        @media (max-width: 991.98px) { 
+            .sidebar {
+                position: fixed;
+                left: calc(-1 * var(--sidebar-width)); /* Oculto fuera de la pantalla */
+                z-index: 1001; 
+                box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            }
+            .sidebar.open-mobile { 
+                left: 0;
+                width: var(--sidebar-width); /* Ancho normal al abrir en móvil */
+            }
+             /* Forzar visualización expandida cuando .open-mobile está presente, ignorando .collapsed */
+            .sidebar.open-mobile .logo-container span,
+            .sidebar.open-mobile .sidebar-nav li a span,
+            .sidebar.open-mobile .sidebar-nav li a.has-submenu::after {
+                display: inline-block; 
+                opacity: 1;
+            }
+            .sidebar.open-mobile .logo-container i,
+            .sidebar.open-mobile .sidebar-nav li a i {
+                margin-right: 12px; 
+                font-size: 1.1em; 
+            }
+            .sidebar.open-mobile .logo-container {
+                justify-content: flex-start;
+                padding: 0 20px;
+            }
+            .sidebar.open-mobile .sidebar-nav li a {
+                justify-content: flex-start;
+                padding: 10px 20px;
+            }
+            /* Si el sidebar está colapsado por localStorage y se abre en móvil */
+            .sidebar.collapsed.open-mobile {
+                width: var(--sidebar-width); /* Forzar ancho completo */
+            }
+
+
+            .top-header {
+                left: 0; 
+            }
+            .main-content {
+                margin-left: 0; 
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 767.98px) { 
+            .sidebar .logo-container { 
+                font-size: 1.3em; 
+            }
+            .sidebar .logo-container i {
+                font-size: 1.1em;
+            }
+            /* Opcional: Ocultar texto del logo en móvil si es muy largo y solo mostrar icono */
+            /* .sidebar.open-mobile .logo-container span { display: none; } */
+            /* .sidebar.open-mobile .logo-container i { margin-right: 0; } */
+
+            .dashboard-summary-cards {
+                grid-template-columns: 1fr; 
+            }
+            .summary-card {
+                min-width: auto; 
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 0; 
+            }
+            .form-row .form-group {
+                width: 100%;
+                margin-bottom: 1.25rem; 
+            }
+            .form-row .form-group-fixed input[type="number"],
+            .form-row .form-group-fixed .button {
+                width: 100%; 
+            }
+            .form-row .form-group-fixed .button {
+                margin-top: 10px; 
+            }
+            .form-actions {
+                text-align: center; 
+            }
+            .form-actions .button {
+                margin: 5px; /* Espacio general */
+                width: calc(50% - 10px); 
+            }
+            .form-actions .button:first-child, .form-actions .button:last-child {
+                 margin-left: 5px; margin-right: 5px; /* Evitar doble margen */
+            }
+
+        }
+
+        @media (max-width: 575.98px) { 
+            .user-profile-trigger span {
+                display: none; 
+            }
+            .user-profile-trigger i {
+                margin-right: 0;
+            }
+            .dropdown-menu { 
+                min-width: 160px;
+            }
+            .form-actions .button {
+                width: 100%;
+                margin: 5px 0;
+            }
+             .form-actions .button:last-child {
+                margin-bottom: 0;
+            }
+        }
     </style>
 </head>
 <body>
@@ -588,10 +712,8 @@
         <div class="main-content" id="mainContent"> 
             <main class="page-content-wrapper">
                 
-                <!-- DASHBOARD -->
                 <div id="dashboard" class="page-section">
                     <div class="page-section-header"><h2>Dashboard</h2></div>
-                    
                     <div class="dashboard-summary-cards">
                         <div class="summary-card">
                             <div class="card-icon compras-icon"><i class="icon-compras"></i></div>
@@ -618,7 +740,6 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="dashboard-charts-section">
                         <h3>Actividad Reciente (Ejemplo)</h3>
                         <div class="chart-placeholder">
@@ -626,7 +747,6 @@
                             <p class="text-muted" style="text-align:center; margin-top:10px;">Aquí iría un gráfico de actividad, ej. Compras vs. Ventas.</p>
                         </div>
                     </div>
-
                     <div class="dashboard-quick-actions">
                         <h3>Accesos Rápidos</h3>
                         <a href="#compras-formulario" class="button button-primary nav-link"><i class="icon-compras"></i> Nueva Compra</a>
@@ -635,22 +755,22 @@
                     </div>
                 </div>
 
-                <!-- COMPRAS LISTADO -->
                 <div id="compras-listado" class="page-section">
                     <div class="page-section-header">
                         <h2>Listado de Compras</h2>
                         <a href="#compras-formulario" class="button button-primary nav-link">Nueva Compra</a>
                     </div>
-                    <table>
-                        <thead><tr><th>ID</th><th>Fecha</th><th>Proveedor</th><th>Estado</th><th>Acciones</th></tr></thead>
-                        <tbody>
-                            <tr><td>C001</td><td>2024-07-15</td><td>Proveedor Alfa</td><td>Pendiente</td><td class="table-actions"><a href="#compras-formulario?id=C001" class="button button-sm button-primary nav-link">Editar</a> <a href="#pacas-formulario?compra_id=C001" class="button button-sm button-success nav-link">Recibir</a></td></tr>
-                            <tr><td>C002</td><td>2024-07-10</td><td>Prov. Beta</td><td>Recibida</td><td class="table-actions"><a href="#compras-formulario?id=C002" class="button button-sm button-primary nav-link">Ver</a></td></tr>
-                        </tbody>
-                    </table>
+                    <div class="table-responsive-wrapper">
+                        <table>
+                            <thead><tr><th>ID</th><th>Fecha</th><th>Proveedor</th><th>Estado</th><th>Acciones</th></tr></thead>
+                            <tbody>
+                                <tr><td>C001</td><td>2024-07-15</td><td>Proveedor Alfa</td><td>Pendiente</td><td class="table-actions"><a href="#compras-formulario?id=C001" class="button button-sm button-primary nav-link">Editar</a> <a href="#pacas-formulario?compra_id=C001" class="button button-sm button-success nav-link">Recibir</a></td></tr>
+                                <tr><td>C002</td><td>2024-07-10</td><td>Prov. Beta</td><td>Recibida</td><td class="table-actions"><a href="#compras-formulario?id=C002" class="button button-sm button-primary nav-link">Ver</a></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
-                <!-- COMPRAS FORMULARIO -->
                 <div id="compras-formulario" class="page-section">
                      <div class="page-section-header"><h2 id="titulo-form-compra">Registrar Nueva Compra</h2> <a href="#compras-listado" class="button button-secondary nav-link">Volver</a></div>
                     <form id="formCompra">
@@ -679,22 +799,22 @@
                     </form>
                 </div>
 
-                <!-- PACAS LISTADO -->
                 <div id="pacas-listado" class="page-section">
                     <div class="page-section-header">
                         <h2 id="titulo-listado-pacas">Listado de Pacas</h2>
                         <a href="#pacas-formulario" class="button button-primary nav-link">Registrar Paca</a>
                     </div>
                      <p id="info-compra-asociada-pacas" class="text-muted"></p>
-                    <table>
-                        <thead><tr><th>ID Paca</th><th>Cód. Único</th><th>Compra</th><th>Fecha Recep.</th><th>Peso</th><th>Estado</th><th>Acciones</th></tr></thead>
-                        <tbody>
-                            <tr><td>P001-1</td><td>BARCODE123</td><td>C001</td><td>2024-07-16</td><td>50.5kg</td><td>Recibida</td><td class="table-actions"><a href="#pacas-formulario?id=P001-1" class="button button-sm button-primary nav-link">Editar</a> <a href="#separacion-formulario?paca_id=P001-1" class="button button-sm button-success nav-link">Separar</a></td></tr>
-                        </tbody>
-                    </table>
+                     <div class="table-responsive-wrapper">
+                        <table>
+                            <thead><tr><th>ID Paca</th><th>Cód. Único</th><th>Compra</th><th>Fecha Recep.</th><th>Peso</th><th>Estado</th><th>Acciones</th></tr></thead>
+                            <tbody>
+                                <tr><td>P001-1</td><td>BARCODE123</td><td>C001</td><td>2024-07-16</td><td>50.5kg</td><td>Recibida</td><td class="table-actions"><a href="#pacas-formulario?id=P001-1" class="button button-sm button-primary nav-link">Editar</a> <a href="#separacion-formulario?paca_id=P001-1" class="button button-sm button-success nav-link">Separar</a></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
-                <!-- PACAS FORMULARIO -->
                 <div id="pacas-formulario" class="page-section">
                     <div class="page-section-header"><h2 id="titulo-form-paca">Registrar Nueva Paca</h2><a href="#pacas-listado" class="button button-secondary nav-link">Volver</a></div>
                     <form id="formPaca">
@@ -715,7 +835,6 @@
                     </form>
                 </div>
 
-                <!-- SEPARACION FORMULARIO -->
                 <div id="separacion-formulario" class="page-section">
                     <div class="page-section-header"><h2 id="titulo-form-separacion">Iniciar Nueva Separación</h2> <a href="#pacas-listado" class="button button-secondary nav-link">Volver</a></div>
                     <form id="formSeparacion">
@@ -736,10 +855,12 @@
                                 <button type="button" id="btnAnadirPiezaSep" class="button button-primary">Añadir</button>
                             </div>
                             <h4>Piezas Añadidas:</h4>
-                            <table id="tabla-piezas-separadas-det">
-                                <thead><tr><th>Categoría</th><th>Tipo</th><th>Cant.</th><th>Acción</th></tr></thead>
-                                <tbody></tbody>
-                            </table>
+                            <div class="table-responsive-wrapper">
+                                <table id="tabla-piezas-separadas-det">
+                                    <thead><tr><th>Categoría</th><th>Tipo</th><th>Cant.</th><th>Acción</th></tr></thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
                             <p>Total Piezas: <span id="total-piezas-sep-span">0</span></p>
                         </div>
                         <div class="form-actions">
@@ -749,7 +870,6 @@
                     </form>
                 </div>
 
-                <!-- PERFIL -->
                 <div id="perfil" class="page-section">
                     <div class="page-section-header"><h2>Mi Perfil</h2></div>
                     <p>Aquí se mostraría la información del perfil del usuario y opciones para editarla.</p>
@@ -779,15 +899,36 @@
         const userDropdownMenu = document.getElementById('userDropdownMenu');
         const logoutLink = document.getElementById('logoutLink');
 
-        const sidebarIsCollapsed = localStorage.getItem('sidebarIsCollapsed') === 'true';
-        if (sidebarIsCollapsed && sidebar) {
-            sidebar.classList.add('collapsed');
+        // Función para aplicar estado del sidebar desde localStorage (solo para desktop)
+        function applyDesktopSidebarState() {
+            if (window.innerWidth >= 992) { // Breakpoint de desktop
+                const sidebarIsCollapsed = localStorage.getItem('sidebarIsCollapsed') === 'true';
+                if (sidebarIsCollapsed) {
+                    sidebar.classList.add('collapsed');
+                } else {
+                    sidebar.classList.remove('collapsed');
+                }
+                 sidebar.classList.remove('open-mobile'); // Asegurar que no esté en modo móvil
+                 document.body.classList.remove('sidebar-open-overlay');
+            } else {
+                // En móvil, el sidebar empieza oculto (controlado por -left)
+                // y no depende directamente de 'collapsed' para su visualización inicial.
+                sidebar.classList.remove('collapsed'); // Quitar 'collapsed' si venía de desktop
+            }
         }
+        applyDesktopSidebarState();
+
 
         if (toggleSidebarBtn && sidebar) {
             toggleSidebarBtn.addEventListener('click', function() {
-                sidebar.classList.toggle('collapsed');
-                localStorage.setItem('sidebarIsCollapsed', sidebar.classList.contains('collapsed'));
+                if (window.innerWidth < 992) { 
+                    sidebar.classList.toggle('open-mobile');
+                    document.body.classList.toggle('sidebar-open-overlay');
+                    // No se guarda el estado 'collapsed' en móvil, solo se abre/cierra
+                } else {
+                    sidebar.classList.toggle('collapsed');
+                    localStorage.setItem('sidebarIsCollapsed', sidebar.classList.contains('collapsed'));
+                }
             });
         }
         
@@ -798,16 +939,22 @@
                 }
                 const parentLi = this.parentElement;
 
-                if (sidebar.classList.contains('collapsed')) {
+                // Si el sidebar está en modo "collapsed" de desktop (no en modo móvil abierto)
+                // y se hace clic en un submenú, expandir el sidebar completo.
+                if (sidebar.classList.contains('collapsed') && !sidebar.classList.contains('open-mobile')) {
                     sidebar.classList.remove('collapsed');
                     localStorage.setItem('sidebarIsCollapsed', 'false'); 
-                    setTimeout(() => {
-                        document.querySelectorAll('.sidebar-nav > li.open').forEach(li => {
-                            if (li !== parentLi) li.classList.remove('open');
-                        });
-                        parentLi.classList.add('open');
+                    // Esperar a que se expanda y luego abrir el submenú
+                     setTimeout(() => {
+                        if (!parentLi.classList.contains('open')) { // Solo abrir si estaba cerrado
+                            // Cerrar otros para comportamiento acordeón
+                            document.querySelectorAll('.sidebar-nav > li.open').forEach(li => {
+                                if (li !== parentLi) li.classList.remove('open');
+                            });
+                            parentLi.classList.add('open');
+                        }
                     }, 150); 
-                } else {
+                } else { // Comportamiento normal de acordeón (sidebar expandido o móvil)
                     const isCurrentlyOpen = parentLi.classList.contains('open');
                     document.querySelectorAll('.sidebar-nav > li.open').forEach(li => {
                         if (li !== parentLi) {
@@ -843,8 +990,16 @@
                     alert('Sesión cerrada (simulado). Redirigiendo al dashboard...');
                     localStorage.removeItem('sidebarIsCollapsed');
                     window.location.hash = '#dashboard';
+                    // location.reload(); // Para un reseteo completo
                 }
             });
+        }
+        
+        function closeMobileSidebar() {
+            if (window.innerWidth < 992 && sidebar.classList.contains('open-mobile')) {
+                sidebar.classList.remove('open-mobile');
+                document.body.classList.remove('sidebar-open-overlay');
+            }
         }
 
         function setActiveSection(targetId, params) {
@@ -894,22 +1049,34 @@
             setActiveSection(targetId, params);
             updateActiveLinkStates(targetIdWithoutQuery);
             if (userDropdownMenu) userDropdownMenu.classList.remove('show'); 
+            closeMobileSidebar();
         }
         
         allNavLinks.forEach(link => { 
             link.addEventListener('click', function(e) {
                 const href = this.getAttribute('href');
-                if (href && href.startsWith('#') && href !== '#') {
-                    if (this.closest('.dropdown-menu')) {
+                // Solo prevenir default para href="#" en submenús, el resto es manejado por hashchange
+                if (href === '#' && this.classList.contains('has-submenu')) {
+                    // El listener de submenuToggles ya hace preventDefault si es necesario
+                } else if (href && href.startsWith('#') && href !== '#') {
+                    if (this.closest('.dropdown-menu')) { // Si el enlace está en el dropdown de perfil
                         userDropdownMenu.classList.remove('show');
                     }
+                    // El sidebar móvil se cierra en handleNavigation
                 }
             });
         });
 
         window.addEventListener('hashchange', () => handleNavigation(window.location.hash));
+        
+        // Listener para redimensionar y ajustar el sidebar
+        window.addEventListener('resize', applyDesktopSidebarState);
+
+        // Carga inicial
         handleNavigation(window.location.hash || '#dashboard');
 
+
+        // --- Lógica Específica de Formularios (Sin cambios) ---
         function loadFormData(sectionId, params) {
             const formCompraEl = document.getElementById('formCompra');
             const formPacaEl = document.getElementById('formPaca');
@@ -946,24 +1113,19 @@
                 }
             }
         }
-
         const provSelectCompra = document.getElementById('prov_id_compra');
         const provLibreGroupCompra = document.getElementById('compra_prov_libre_group');
         if (provSelectCompra && provLibreGroupCompra) { provSelectCompra.addEventListener('change', function() { provLibreGroupCompra.classList.toggle('hidden', this.value !== 'otro'); });}
-        
         const subtotalInput = document.getElementById('compra_subtotal');
         const impuestosInput = document.getElementById('compra_impuestos');
         const totalDispInput = document.getElementById('compra_total_disp');
         function calcTotalCompra() { if (subtotalInput && impuestosInput && totalDispInput) { totalDispInput.value = ((parseFloat(subtotalInput.value)||0) + (parseFloat(impuestosInput.value)||0)).toFixed(2); }}
         if(subtotalInput) subtotalInput.addEventListener('input', calcTotalCompra);
         if(impuestosInput) impuestosInput.addEventListener('input', calcTotalCompra);
-        
         const formCompra = document.getElementById('formCompra');
         if(formCompra) { formCompra.addEventListener('submit', function(e){ e.preventDefault(); alert('Compra guardada (simulado)'); window.location.hash = '#compras-listado'; });}
-
         const formPaca = document.getElementById('formPaca');
         if(formPaca) { formPaca.addEventListener('submit', function(e){ e.preventDefault(); alert('Paca guardada (simulado)'); window.location.hash = '#pacas-listado'; });}
-
         const selectPacaSep = document.getElementById('sep_paca_id_select');
         const pacaPesoSepSpan = document.getElementById('paca-peso-sep');
         const pacaTipoSepSpan = document.getElementById('paca-tipo-sep');
@@ -974,12 +1136,10 @@
                 pacaTipoSepSpan.textContent = opt.dataset.tipo || '--'; 
             });
         }
-
         const btnAnadirPiezaSep = document.getElementById('btnAnadirPiezaSep');
         const tablaPiezasBodySep = document.getElementById('tabla-piezas-separadas-det')?.getElementsByTagName('tbody')[0]; 
         const totalPiezasSepSpan = document.getElementById('total-piezas-sep-span');
         let _totalPiezasSep = 0;
-
         if (btnAnadirPiezaSep && tablaPiezasBodySep && totalPiezasSepSpan) {
             btnAnadirPiezaSep.addEventListener('click', function() {
                 const catSel = document.getElementById('det_cat_pieza_id_sep');
@@ -988,17 +1148,12 @@
                 const catTxt = catSel.options[catSel.selectedIndex].text; 
                 const tipoTxt = tipoSel.options[tipoSel.selectedIndex].text;
                 const cant = parseInt(cantInput.value) || 0;
-                
                 if (!catSel.value || !tipoSel.value || cant <= 0) { alert('Complete todos los datos de la pieza y asegúrese que la cantidad sea mayor a cero.'); return; }
-                
                 const newRow = tablaPiezasBodySep.insertRow();
                 newRow.innerHTML = `<td>${catTxt}</td><td>${tipoTxt}</td><td>${cant}</td><td class="table-actions"><button type="button" class="button button-sm button-danger btn-eliminar-pieza-sep">X</button></td>`;
-                
                 _totalPiezasSep += cant; 
                 totalPiezasSepSpan.textContent = _totalPiezasSep;
-                
                 catSel.value = ''; tipoSel.value = ''; cantInput.value = ''; 
-                
                 newRow.querySelector('.btn-eliminar-pieza-sep').addEventListener('click', function() {
                     const fila = this.closest('tr');
                     const cantEliminar = parseInt(fila.cells[2].textContent); 
